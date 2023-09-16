@@ -3,7 +3,9 @@ class Api::V1::BooksController < ApplicationController
 
   # GET /books
   def index
-    @books = Book.all
+    @books = Book.active.all
+    @books = @books.find(params[:id]) if params[:id].present?
+    @books = @books.where('books.title LIKE ?', "%#{params[:title]}%") if params[:title].present?
 
     render json: @books
   end
@@ -46,6 +48,6 @@ class Api::V1::BooksController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def book_params
-      params.require(:book).permit(:title, :body)
+      params.require(:book).permit(:title, :body, :cost_cents, :price_cents, :discount)
     end
 end
